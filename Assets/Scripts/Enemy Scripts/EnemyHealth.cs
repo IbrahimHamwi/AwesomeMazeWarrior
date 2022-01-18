@@ -1,3 +1,37 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:07173349a3b89313192595806faa1f9e46962a01957cfa3147c151bb80990990
-size 754
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class EnemyHealth : MonoBehaviour
+{
+    public int health = 100;
+    private EnemyScript enemyScript;
+    private Animator anim;
+
+    void Awake()
+    {
+        enemyScript = GetComponent<EnemyScript>();
+        anim = GetComponent<Animator>();
+    }
+    public void ApplyDamage(int damageAmount)
+    {
+        health -= damageAmount;
+        GameplayController.instance.EnemyHit.Play();
+        if (health < 0)
+        {
+            health = 0;
+        }
+        if (health == 0)
+        {
+            enemyScript.enabled = false;
+            anim.SetTrigger(MyTags.DEAD_TRIGGER);
+            GameplayController.instance.EnemyDie.Play();
+
+            Invoke("DeactivateEnemy", 3f);
+        }
+    }
+    void DeactivateEnemy()
+    {
+        gameObject.SetActive(false);
+    }
+}

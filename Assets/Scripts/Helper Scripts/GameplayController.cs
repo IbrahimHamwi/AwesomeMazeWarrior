@@ -1,3 +1,62 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:2def47f3c78868452adbee134ec534a4344defe6c68099fd2850799ae1142080
-size 1448
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class GameplayController : MonoBehaviour
+{
+    public static GameplayController instance = null;
+    public AudioSource PlayerHit, PlayerDie, EnemyHit, EnemyDie, DoorOpen, DoorClose, Run;
+    private Text coinText, healthText, timerText;
+    private int coinScore;
+    [HideInInspector] public bool isPlayerAlive;
+
+    public float timerTime = 99f;
+
+    public GameObject endPanel;
+
+    void Awake()
+    {
+        MakeInstance();
+
+        coinText = GameObject.Find("CoinText").GetComponent<Text>();
+        healthText = GameObject.Find("HealthText").GetComponent<Text>();
+        timerText = GameObject.Find("TimerText").GetComponent<Text>();
+
+        coinText.text = "Coins: " + coinScore;
+    }
+    void Start()
+    {
+        isPlayerAlive = true;
+        endPanel.SetActive(false);
+    }
+    void Update()
+    {
+        CountdownTimer();
+    }
+
+    void MakeInstance()
+    {
+        instance = this;
+
+    }
+    public void CoinCollected()
+    {
+        coinScore++;
+        coinText.text = "Coins: " + coinScore;
+    }
+    public void DisplayHealth(int health)
+    {
+        healthText.text = "Health: " + health;
+    }
+    void CountdownTimer()
+    {
+        timerTime -= Time.deltaTime;
+        timerText.text = "Time: " + timerTime.ToString("F0");
+    }
+    public void GameOver()
+    {
+        Time.timeScale = 0f;
+        endPanel.SetActive(true);
+    }
+}
